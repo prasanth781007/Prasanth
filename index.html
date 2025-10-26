@@ -1,0 +1,1388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>B.E. ECE Curriculum - Semester Details</title>
+  <!-- Defer - executes after HTML is parsed -->
+<script src="semaster.js"></script>
+
+<style>
+    /* Basic Reset & Body Styling */
+    body {
+      font-family: "Roboto", sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f7f6;
+      color: #333;
+      line-height: 1.6;
+      scroll-behavior: smooth;
+    }
+
+    /* Go to Home Button */
+    #goHomeBtn {
+      position: fixed;
+      top: 10px;
+      right: 20px;
+      background-color: #1abc9c;
+      color: white;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 70%;
+      cursor: pointer;
+      font-size: 14px;
+      z-index: 1000;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+      transition: background-color 0.3s ease;
+    }
+    #goHomeBtn:hover {
+      background-color: #16a085;
+    }
+
+    /* Header */
+    header {
+      background-color: #2c3e50;
+      color: #ecf0f1;
+      padding: 20px 0;
+      text-align: center;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      position: relative;
+      margin-top: 50px; /* To avoid overlap with fixed button */
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 2.5em;
+    }
+
+    header p {
+      margin: 5px 0 0;
+      font-size: 1.1em;
+      opacity: 0.9;
+    }
+
+    /* Semester Buttons Container */
+    .semester-buttons {
+      max-width: 900px;
+      margin: 20px auto 10px;
+      padding: 0 20px;
+      text-align: center;
+    }
+
+    .semester-buttons button {
+      background-color: #3498db;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      margin: 5px 8px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background-color 0.3s ease;
+      min-width: 80px;
+    }
+
+    .semester-buttons button:hover,
+    .semester-buttons button.active {
+      background-color: #2980b9;
+    }
+
+    /* Main Content Area */
+    .container {
+      max-width: 900px;
+      margin: 0 auto 30px;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      min-height: 400px;
+    }
+
+    /* Subject List */
+    .subject-list ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .subject-list li {
+      background-color: #e8f6f3;
+      margin-bottom: 10px;
+      padding: 15px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: bold;
+      color: #2c3e50;
+    }
+
+    .subject-list li:hover {
+      background-color: #d4edda;
+      transform: translateY(-3px);
+    }
+
+    .subject-list li .arrow {
+      font-size: 1.2em;
+      transition: transform 0.3s ease;
+    }
+
+    .subject-list li.active .arrow {
+      transform: rotate(90deg);
+    }
+
+    .subject-detail {
+      padding: 20px 0 0 0;
+    }
+
+    .subject-detail h2 {
+      color: #2c3e50;
+      border-bottom: 2px solid #1abc9c;
+      padding-bottom: 10px;
+      margin-bottom: 20px;
+      font-size: 1.8em;
+    }
+
+    .subject-detail h3 {
+      color: #2980b9;
+      border-bottom: 1px solid #a0d9ff;
+      padding-bottom: 8px;
+      margin-bottom: 15px;
+    }
+
+    .subject-detail p {
+      margin-bottom: 10px;
+    }
+
+    .subject-detail ul {
+      list-style: disc;
+      margin-left: 20px;
+      margin-bottom: 15px;
+    }
+
+    .subject-detail .chapter-list ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .subject-detail .chapter-list li {
+      background-color: #f0f8ff;
+      border-left: 3px solid #3498db;
+      padding: 10px;
+      margin-bottom: 8px;
+      font-weight: normal;
+      cursor: pointer;
+      position: relative;
+      display: flex; /* Use flexbox for alignment */
+      justify-content: space-between; /* Space between title and arrow */
+      align-items: center; /* Vertically align items */
+    }
+
+    .subject-detail .chapter-list li:hover {
+      background-color: #e0f2ff; /* Lighter blue on hover */
+    }
+
+    .subject-detail .chapter-list li .chapter-title-wrapper {
+      flex-grow: 1; /* Allow title to take available space */
+    }
+
+    .subject-detail .chapter-list li .chapter-arrow {
+      font-size: 1.2em;
+      transition: transform 0.3s ease;
+    }
+
+    .subject-detail .chapter-list li.active .chapter-arrow {
+      transform: rotate(90deg);
+    }
+
+    .subject-detail .chapter-content {
+      display: none; /* Hidden by default */
+      padding: 10px 0 0 15px;
+      border-top: 1px dashed #ccc;
+      margin-top: 5px;
+      font-size: 0.95em;
+      line-height: 1.5;
+      color: #555;
+    }
+
+    .subject-detail .chapter-content strong {
+      color: #2c3e50; /* Make "Topics" and "Activities" bold and darker */
+    }
+
+    .subject-detail .chapter-content em {
+      font-style: normal; /* Override default italic for activities */
+      font-weight: normal; /* Ensure activities text is not bold by default */
+    }
+
+    .subject-detail .resources ul,
+    .subject-detail .practicals ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .subject-detail .resources li,
+    .subject-detail .practicals li {
+      background-color: #f9f9f9;
+      margin-bottom: 5px;
+      padding: 8px;
+      border-left: 3px solid #ccc;
+      border-radius: 4px;
+      font-size: 0.95em;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .subject-detail .resources li a,
+    .subject-detail .practicals li a {
+      color: #2980b9;
+      text-decoration: none;
+    }
+
+    .subject-detail .resources li a:hover,
+    .subject-detail .practicals li a:hover {
+      text-decoration: underline;
+    }
+
+    /* Show Pictures Button */
+    .show-btn {
+      margin-left: 15px;
+      background-color: #3498db;
+      color: white;
+      padding: 5px 10px;
+      border-radius: 4px;
+      text-decoration: none;
+      font-size: 0.85em;
+      transition: background-color 0.3s ease;
+      white-space: nowrap;
+      border: none;
+      cursor: pointer;
+    }
+
+    .show-btn:hover {
+      background-color: #2980b9;
+    }
+
+    /* Modal for Images */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1001;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.8);
+    }
+
+    .modal-content {
+      background-color: #fff;
+      margin: 10% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%;
+      max-width: 600px;
+      text-align: center;
+      border-radius: 8px;
+      position: relative;
+    }
+
+    .close {
+      position: absolute;
+      top: 10px;
+      right: 20px;
+      color: #aaa;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .close:hover {
+      color: black;
+    }
+
+    .slideshow img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 8px;
+    }
+
+    .nav-btn {
+      background-color: #1abc9c;
+      color: white;
+      border: none;
+      padding: 10px;
+      margin: 10px 5px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .nav-btn:hover {
+      background-color: #16a085;
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Footer */
+    footer {
+      background-color: #2c3e50;
+      color: #ecf0f1;
+      text-align: center;
+      padding: 15px 10px;
+      font-size: 0.9em;
+      margin-top: 40px;
+      border-top: 3px solid #1abc9c;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      header h1 {
+        font-size: 2em;
+      }
+      .container {
+        margin: 20px 10px;
+        padding: 15px;
+      }
+      .subject-detail .resources li,
+      .subject-detail .practicals li {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .show-btn {
+        margin-left: 0;
+        margin-top: 5px;
+      }
+      .modal-content {
+        width: 95%;
+        margin: 20% auto;
+      }
+      .semester-buttons button {
+        min-width: 60px;
+        margin: 5px 3px;
+        padding: 8px 10px;
+        font-size: 13px;
+      }
+    }
+    
+    .pdf-download-btn, .app-guide-download-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(to right, #ff8a00, #da1b60);
+      color: white;
+      padding: 15px 30px;
+      font-size: 1.2rem;
+      font-weight: 600;
+      text-decoration: none;
+      border-radius: 50px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      transition: all 0.3s ease;
+      margin: 10px;
+      border: none;
+      cursor: pointer;
+    }
+    
+    .pdf-download-btn:hover, .app-guide-download-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+      background: linear-gradient(to right, #ff9a3d, #e63972);
+    }
+    
+    .pdf-download-btn:active, .app-guide-download-btn:active {
+      transform: translateY(1px);
+    }
+    
+    .pdf-icon, .app-guide-icon {
+      margin-right: 10px;
+      font-size: 1.5rem;
+    }
+    
+    .pdf-features, .app-guide-features {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 40px;
+    }
+    
+    .pdf-feature, .app-guide-feature {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 15px;
+      padding: 20px;
+      margin: 10px;
+      width: 200px;
+      transition: transform 0.3s ease;
+    }
+    
+    .pdf-feature:hover, .app-guide-feature:hover {
+      transform: translateY(-5px);
+    }
+    
+    .pdf-feature h3, .app-guide-feature h3 {
+      margin-bottom: 10px;
+      font-size: 1.2rem;
+    }
+    
+    .pdf-feature p, .app-guide-feature p {
+      font-size: 0.9rem;
+      margin-bottom: 0;
+    }
+    
+    .pdf-file-info, .app-guide-file-info {
+      margin-top: 30px;
+      font-size: 0.9rem;
+      opacity: 0.8;
+    }
+    
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 2rem;
+      }
+      
+      p {
+        font-size: 1rem;
+      }
+      
+      .pdf-download-btn, .app-guide-download-btn {
+        padding: 12px 25px;
+        font-size: 1rem;
+      }
+    }
+
+    /* Chapter Progress Sidebar */
+    .chapter-sidebar {
+      position: fixed;
+      top: 0;
+      right: -400px; /* Fixed incorrect value */
+      width: 80%;
+      max-width: 400px;
+      height: 100vh;
+      background-color: #fff;
+      box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+      z-index: 1002;
+      transition: right 0.3s ease;
+      overflow-y: auto;
+      padding: 20px;
+    }
+
+    .chapter-sidebar.active {
+      right: 0;
+    }
+
+    .sidebar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #1abc9c;
+      background-color: white;
+    }
+
+    .sidebar-header h2 {
+      margin: 0;
+      color: #2c3e50;
+    }
+
+    .close-sidebar {
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: #7f8c8d;
+    }
+
+    .close-sidebar:hover {
+      color: #2c3e50;
+    }
+
+    .progress-container {
+      margin-bottom: 20px;
+    }
+
+    .progress-bar {
+      height: 10px;
+      background-color: #ecf0f1;
+      border-radius: 5px;
+      overflow: hidden;
+      margin-bottom: 10px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background-color: #1abc9c;
+      width: 0%;
+      transition: width 0.5s ease;
+    }
+
+    .progress-text {
+      font-size: 14px;
+      color: #7f8c8d;
+    }
+
+    .topic-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .topic-item {
+      display: flex;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid #ecf0f1;
+    }
+
+    .topic-item:last-child {
+      border-bottom: none;
+    }
+
+    .topic-checkbox {
+      margin-right: 10px;
+      width: 18px;
+      height: 18px;
+    }
+
+    .topic-label {
+      flex: 1;
+      cursor: pointer;
+    }
+
+    .topic-label.completed {
+      text-decoration: line-through;
+      color: #7f8c8d;
+    }
+
+    .sidebar-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 1001;
+      display: none;
+    }
+
+    .sidebar-overlay.active {
+      display: block;
+    }
+
+    .chapter-track-btn {
+      background-color: #1abc9c;
+      color: white;
+      border: none;
+      padding: 8px 15px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      margin-top: 10px;
+      transition: background-color 0.3s ease;
+    }
+
+    .chapter-track-btn:hover {
+      background-color: #16a085;
+    }
+
+    .chapter-progress-summary {
+      margin-top: 20px;
+      padding: 15px;
+      background-color: #f8f9fa;
+      border-radius: 5px;
+      border-left: 4px solid #3498db;
+    }
+
+    .chapter-progress-summary h4 {
+      margin-top: 0;
+      color: #2c3e50;
+    }
+
+    .chapter-progress-summary p {
+      margin: 5px 0;
+      font-size: 14px;
+    }
+
+    .chapter-progress-summary .progress-highlight {
+      font-weight: bold;
+      color: #1abc9c;
+    }
+
+    /* Popup styling */
+    .open-btn {
+      background: #007BFF;
+      color: white;
+      border: none;
+      padding: 14px 30px;
+      border-radius: 10px;
+      font-size: 17px;
+      cursor: pointer;
+      transition: 0.3s;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+      margin: 15px 0;
+    }
+
+    .open-btn:hover {
+      background: #0056b3;
+    }
+
+    /* Overlay */
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(3px);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 50;
+    }
+
+    /* Popup container */
+    .popup-container {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.4);
+      width: 80%;
+      max-width: 800px;
+      height: 80%;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      animation: popupIn 0.4s ease;
+      overflow: hidden;
+    }
+
+    /* Scrollable content */
+    .content-scroll {
+      flex-grow: 1;
+      overflow-y: auto;
+      padding: 70px 25px 60px;
+    }
+
+    @keyframes popupIn {
+      from { transform: scale(0.9); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    /* Fixed close button */
+    .close-btn {
+      position: fixed;
+      top: 20px;
+      right: 70px;
+      background: crimson;
+      color: white;
+      border: none;
+      padding: 10px 14px;
+      border-radius: 50%;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 18px;
+      z-index: 100;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.3);
+    }
+
+    .close-btn:hover {
+      background: darkred;
+    }
+
+    /* Chapter text */
+    .chapter {
+      margin: 15px 0;
+    }
+
+    .chapter h3 {
+      margin-bottom: 10px;
+      color: #007BFF;
+    }
+
+    .chapter p {
+      margin: 6px 0;
+      line-height: 1.6;
+    }
+
+    /* Scrollbar styling */
+    .content-scroll::-webkit-scrollbar {
+      width: 10px;
+    }
+    .content-scroll::-webkit-scrollbar-thumb {
+      background: #007BFF;
+      border-radius: 8px;
+    }
+    
+    .app-guide-container {
+      text-align: center;
+      margin: 20px 0;
+    }
+  .pdfEce-btn {
+      padding: 12px 25px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background 0.3s;
+    }
+
+    .pdfEce-btn:hover {
+      background-color: #0056b3;
+    }
+
+    /* Modal styles */
+    .pdfEce-modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
+      justify-content: center;
+      align-items: center;
+    }
+
+    .pdfEce-modal-content {
+      background-color: white;
+      padding: 20px;
+      border-radius: 12px;
+      width: 85%;
+      max-width: 900px;
+      height: 90%;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      animation: fadeIn 0.3s ease;
+      overflow: hidden;
+    }
+
+    @keyframes fadeIn {
+      from {opacity: 0; transform: scale(0.9);}
+      to {opacity: 1; transform: scale(1);}
+    }
+
+    .pdfEce-close-btn {
+      position: absolute;
+      top: 10px;
+      right: 20px;
+      font-size: 24px;
+      font-weight: bold;
+      color: #333;
+      cursor: pointer;
+    }
+
+    .pdfEce-viewer {
+      width: 100%;
+      height: 100%;
+      border: none;
+      flex: 1;
+      margin-top: 10px;
+      border-radius: 8px;
+    }
+
+    .pdfEce-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      padding-top: 10px;
+    }
+
+    .pdfEce-download-btn {
+      padding: 10px 20px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .pdfEce-download-btn:hover {
+      background-color: #218838;
+    }
+
+    /* Star rating */
+    .pdfEce-star-rating {
+      display: flex;
+      gap: 8px;
+      cursor: pointer;
+      font-size: 24px;
+      color: #ccc;
+    }
+
+    .pdfEce-star-rating .pdfEce-star.active {
+      color: gold;
+    }
+
+    #pdfEce-ratingText {
+      font-size: 14px;
+      color: #555;
+      margin-left: 10px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Go to Home Button -->
+  <button id="goHomeBtn" onclick="scrollToTop()">H</button>
+
+  <header>
+    <h1>B.E. Electronics and Communication Engineering</h1>
+    <p>Regulations: 2025 - Semester Details</p>
+  </header>
+
+  <!-- Semester Buttons -->
+  <div class="semester-buttons" id="semesterButtons">
+    <button class="active" onclick="showSemester(1)">Semester 1</button>
+    <button onclick="showSemester(2)">Semester 2</button>
+    <button onclick="showSemester(3)">Semester 3</button>
+    <button onclick="showSemester(4)">Semester 4</button>
+    <button onclick="showSemester(5)">Semester 5</button>
+    <button onclick="showSemester(6)">Semester 6</button>
+    <button onclick="showSemester(7)">Semester 7</button>
+    <button onclick="showSemester(8)">Semester 8</button>
+  </div>
+
+  <div class="container">
+    <div id="semesterContent"></div>
+  </div>
+  
+  <!-- Chapter Progress Sidebar -->
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+  <div class="chapter-sidebar" id="chapterSidebar">
+    <div class="sidebar-header">
+      <h2 id="sidebarTitle">Chapter Progress</h2>
+      <button class="close-sidebar" onclick="closeChapterSidebar()">&times;</button>
+    </div>
+    
+    <div class="progress-container">
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+      <div class="progress-text" id="progressText">0% Complete</div>
+    </div>
+    
+    <div id="topicListContainer">
+      <!-- Topic checkboxes will be populated here -->
+    </div>
+    <div class="chapter-progress-summary">
+      <h4>Progress Summary</h4>
+      <p>Completed: <span class="progress-highlight" id="completedCount">0</span> out of <span id="totalCount">0</span> topics</p>
+      <p>Remaining: <span class="progress-highlight" id="remainingCount">0</span> topics</p>
+    </div>
+  </div>
+  
+  <!-- Modal for Image Slideshow -->
+  <div id="imageModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal()">&times;</span>
+      <div class="slideshow">
+  <br />
+        <button class="nav-btn" onclick="changeSlide(-1)">Previous</button>
+        <button class="nav-btn" onclick="changeSlide(1)">Next</button>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>© 2024 Anna University, Chennai - Department of Electronics and Communication Engineering</p>
+    <p>Contact: info@annauniv.edu | Phone: +91-44-22357000</p>
+  </footer>
+
+  
+  <!-- ECE PDF Modal (shared by all CAIT buttons) -->
+<div id="pdfEce-modal" class="pdfEce-modal">
+  <div class="pdfEce-modal-content">
+    <span class="pdfEce-close-btn" id="pdfEce-closeBtn">&times;</span>
+    <h2>PDF Preview</h2>
+
+    <embed id="pdfEce-embed" class="pdfEce-viewer" src="" type="application/pdf" />
+
+    <div class="pdfEce-footer">
+      <a id="pdfEce-download" href="#" download class="pdfEce-download-btn">Download PDF</a>
+
+      <div style="display:flex;align-items:center;">
+        <div class="pdfEce-star-rating" id="pdfEce-starRating">
+          <span class="pdfEce-star" data-value="1">&#9733;</span>
+          <span class="pdfEce-star" data-value="2">&#9733;</span>
+          <span class="pdfEce-star" data-value="3">&#9733;</span>
+          <span class="pdfEce-star" data-value="4">&#9733;</span>
+          <span class="pdfEce-star" data-value="5">&#9733;</span>
+        </div>
+        <p id="pdfEce-ratingText"></p>
+      </div>
+    </div>
+  </div>
+</div>
+  <script>
+    let currentImages = [];
+    let currentIndex = 0;
+    let currentSemester = 1; // Global variable to keep track of the current semester
+    let currentChapterData = null; // Store current chapter data for sidebar
+    let progressData = {}; // Store progress data for all chapters
+
+    // Initialize progress data from localStorage if available
+    function initializeProgressData() {
+      const savedProgress = localStorage.getItem('chapterProgress');
+      if (savedProgress) {
+        progressData = JSON.parse(savedProgress);
+      }
+    }
+
+    // Save progress data to localStorage
+    function saveProgressData() {
+      localStorage.setItem('chapterProgress', JSON.stringify(progressData));
+    }
+
+    
+
+    // Scroll to top function for "Go to Home" button
+    function scrollToTop() {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Show semester content based on selected semester number
+    function showSemester(sem) {
+      currentSemester = sem; // Update global currentSemester
+
+      // Update active button style
+      const buttons = document.querySelectorAll('.semester-buttons button');
+      buttons.forEach((btn, idx) => {
+        btn.classList.toggle('active', idx === sem - 1);
+      });
+
+      const semesterContent = document.getElementById('semesterContent');
+      semesterContent.innerHTML = ''; // Clear previous content
+
+      const data = semesterData[sem];
+      if (!data) {
+        semesterContent.innerHTML = '<p>No data available for this semester.</p>';
+        return;
+      }
+
+      // Title
+      const titleEl = document.createElement('h2');
+      titleEl.textContent = data.title;
+      semesterContent.appendChild(titleEl);
+
+      // Subject list container
+      const subjectListDiv = document.createElement('div');
+      subjectListDiv.className = 'subject-list';
+
+      const ul = document.createElement('ul');
+
+      // For each subject, create a list item
+      for (const code in data.subjects) {
+        const subject = data.subjects[code];
+
+        const li = document.createElement('li');
+        li.tabIndex = 0; // Make focusable for accessibility
+        li.innerHTML = `
+          <span>${code} - ${subject.name}</span>
+          <span class="arrow">&#9654;</span>
+        `;
+
+        // Subject detail container (hidden initially)
+        const detailDiv = document.createElement('div');
+        detailDiv.className = 'subject-detail';
+        detailDiv.style.display = 'none';
+
+        // Process chapters to include LaTeX formatting and toggle structure
+        const chaptersHtml = subject.chapters.map((ch, i) => {
+          // Replace LaTeX math delimiters with appropriate HTML for MathJax (or similar)
+          // For simplicity, I'm just replacing them here. For actual rendering, you'd need MathJax library.
+          const formattedTopics = ch.topics.replace(/\\\$([^\\\$]+)\\\$/g, '<code>$1</code>') // Inline math
+                                            .replace(/\\\$\\n([^\\\$]+)\\\$\\n/g, '<pre><code>$1</code></pre>'); // Display math (simplified)
+          return `
+            <li tabindex="0" data-subject="${code}" data-chapter="${i}">
+              <div class="chapter-title-wrapper">
+                <strong>${ch.title}</strong>
+                <span class="chapter-arrow">&#9654;</span>
+              </div>
+              <div class="chapter-content">
+                <p><strong>Topics:</strong> ${formattedTopics}</p>
+                <p><strong>Activities:</strong> ${ch.activities}</p>
+                <button class="chapter-track-btn" data-subject="${code}" data-chapter="${i}">Track Progress</button>
+              </div>
+            </li>
+          `;
+        }).join('');
+
+        // Fill subject details
+        detailDiv.innerHTML = `
+          <h2>${subject.name} (${code})</h2>   
+          <p><strong>Type:</strong> ${subject.type}</p>
+          <p><strong>Periods:</strong> ${subject.periods}</p>
+          <p><strong>Credits:</strong> ${subject.credits}</p>
+          <p><strong>Category:</strong> ${subject.category}</p>
+          <h3>Objectives</h3>
+          <ul>${subject.objectives.map(obj => `<li>${obj}</li>`).join('')}</ul>
+          
+          <button class="open-btn" onclick="showPdfPopup('${code}')">Show PDF Resources</button>
+          
+          <h3>Chapters</h3>
+          <div class="chapter-list">
+            <ul>${chaptersHtml}</ul>
+          </div>
+          <h3>Resources</h3>
+          <div class="resources">
+            <ul>
+              ${subject.resources.map(res => `
+                <li>${res.icon} <a href="${res.link}" target="_blank" rel="noopener">${res.text}</a></li>
+              `).join('')}
+            </ul>
+          </div>
+          <h3>Practicals</h3>
+          <div class="practicals">
+            <ul>
+              ${subject.practicals.map((prac, idx) => `
+                <li>
+                  ${prac.description}
+                  ${prac.images && prac.images.length > 0 ? `<button class="show-btn" data-subject="${code}" data-practical="${idx}">Show Pictures</button>` : ''}
+                </li>
+              `).join('')}
+            </ul>
+          </div>
+        `;
+
+        // Append li and detailDiv to the main ul
+        ul.appendChild(li);
+        ul.appendChild(detailDiv);
+
+        // Click event to toggle subject detail
+        li.addEventListener('click', () => {
+          const isActive = li.classList.contains('active');
+          // Close all other subjects
+          document.querySelectorAll('.subject-list li.active').forEach(el => {
+            el.classList.remove('active');
+            el.nextElementSibling.style.display = 'none';
+          });
+          if (!isActive) {
+            li.classList.add('active');
+            detailDiv.style.display = 'block';
+          } else {
+            li.classList.remove('active');
+            detailDiv.style.display = 'none';
+          }
+        });
+      }
+
+      subjectListDiv.appendChild(ul);
+      semesterContent.appendChild(subjectListDiv);
+
+      // Add event listeners for chapter toggling
+      const chapterItems = semesterContent.querySelectorAll('.chapter-list li');
+      chapterItems.forEach(li => {
+        li.addEventListener('click', (e) => {
+          // Prevent event bubbling to subject li
+          e.stopPropagation();
+          const contentDiv = li.querySelector('.chapter-content');
+          const arrowSpan = li.querySelector('.chapter-arrow');
+
+          // Toggle display of chapter content
+          if (contentDiv.style.display === 'block') {
+            contentDiv.style.display = 'none';
+            li.classList.remove('active'); // Remove active class for arrow rotation
+          } else {
+            contentDiv.style.display = 'block';
+            li.classList.add('active'); // Add active class for arrow rotation
+          }
+        });
+      });
+
+      // Add event listeners for "Track Progress" buttons
+      const trackButtons = semesterContent.querySelectorAll('.chapter-track-btn');
+      trackButtons.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const subjectCode = btn.getAttribute('data-subject');
+          const chapterIndex = parseInt(btn.getAttribute('data-chapter'));
+          openChapterSidebar(subjectCode, chapterIndex);
+        });
+      });
+
+      // Add event listeners for "Show Pictures" buttons
+      const showBtns = semesterContent.querySelectorAll('.show-btn');
+      showBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const subjectCode = btn.getAttribute('data-subject');
+          const practicalIndex = parseInt(btn.getAttribute('data-practical'));
+          showPracticalImages(subjectCode, practicalIndex);
+        });
+      });
+
+      // Animate content appearance
+      semesterContent.style.animation = 'fadeIn 0.5s ease';
+    }
+
+    // Open chapter sidebar with progress tracking
+    function openChapterSidebar(subjectCode, chapterIndex) {
+      const subject = semesterData[currentSemester].subjects[subjectCode];
+      const chapter = subject.chapters[chapterIndex];
+      
+      // Store current chapter data
+      currentChapterData = {
+        subjectCode,
+        chapterIndex,
+        chapterTitle: chapter.title,
+        topics: chapter.topics.split(', ').map(topic => topic.trim())
+      };
+      
+      // Update sidebar title
+      document.getElementById('sidebarTitle').textContent = `${subjectCode} - ${chapter.title}`;
+      
+      // Initialize or get progress data for this chapter
+      const chapterKey = `${subjectCode}-${chapterIndex}`;
+      if (!progressData[chapterKey]) {
+        progressData[chapterKey] = {
+          completed: Array(currentChapterData.topics.length).fill(false),
+          total: currentChapterData.topics.length
+        };
+      }
+      
+      // Populate topic list
+      const topicListContainer = document.getElementById('topicListContainer');
+      topicListContainer.innerHTML = '';
+      
+      const topicList = document.createElement('ul');
+      topicList.className = 'topic-list';
+      
+      currentChapterData.topics.forEach((topic, index) => {
+        const topicItem = document.createElement('li');
+        topicItem.className = 'topic-item';
+        
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.className = 'topic-checkbox';
+        checkbox.id = `topic-${index}`;
+        checkbox.checked = progressData[chapterKey].completed[index] || false;
+        
+        checkbox.addEventListener('change', () => {
+          progressData[chapterKey].completed[index] = checkbox.checked;
+          updateChapterProgress(chapterKey);
+          saveProgressData();
+        });
+        
+        const label = document.createElement('label');
+        label.htmlFor = `topic-${index}`;
+        label.className = 'topic-label';
+        label.textContent = topic;
+        if (checkbox.checked) {
+          label.classList.add('completed');
+        }
+        
+        topicItem.appendChild(checkbox);
+        topicItem.appendChild(label);
+        topicList.appendChild(topicItem);
+      });
+      
+      topicListContainer.appendChild(topicList);
+      
+      // Update progress display
+      updateChapterProgress(chapterKey);
+      
+      // Show sidebar
+      document.getElementById('chapterSidebar').classList.add('active');
+      document.getElementById('sidebarOverlay').classList.add('active');
+    }
+
+    // Close chapter sidebar
+    function closeChapterSidebar() {
+      document.getElementById('chapterSidebar').classList.remove('active');
+      document.getElementById('sidebarOverlay').classList.remove('active');
+    }
+
+    // Update chapter progress display
+    function updateChapterProgress(chapterKey) {
+      const chapterProgress = progressData[chapterKey];
+      const completedCount = chapterProgress.completed.filter(Boolean).length;
+      const totalCount = chapterProgress.total;
+      const progressPercentage = Math.round((completedCount / totalCount) * 100);
+      
+      // Update progress bar
+      document.getElementById('progressFill').style.width = `${progressPercentage}%`;
+      document.getElementById('progressText').textContent = `${progressPercentage}% Complete`;
+      // Update progress summary
+      document.getElementById('completedCount').textContent = completedCount;
+      document.getElementById('totalCount').textContent = totalCount;
+      document.getElementById('remainingCount').textContent = totalCount - completedCount;
+      
+      // Update checkbox labels
+      const labels = document.querySelectorAll('.topic-label');
+      labels.forEach((label, index) => {
+        if (chapterProgress.completed[index]) {
+          label.classList.add('completed');
+        } else {
+          label.classList.remove('completed');
+        }
+      });
+    }
+
+    // Show practical images in modal
+    function showPracticalImages(subjectCode, practicalIndex) {
+      const subject = semesterData[currentSemester].subjects[subjectCode];
+      const practical = subject.practicals[practicalIndex];
+      currentImages = practical.images;
+      currentIndex = 0;
+      document.getElementById('slideImage').src = currentImages[currentIndex];
+      document.getElementById('imageModal').style.display = 'block';
+    }
+
+    // Close modal
+    function closeModal() {
+      document.getElementById('imageModal').style.display = 'none';
+    }
+
+    // Change slide in modal
+    function changeSlide(direction) {
+      currentIndex += direction;
+      if (currentIndex < 0) currentIndex = currentImages.length - 1;
+      if (currentIndex >= currentImages.length) currentIndex = 0;
+      document.getElementById('slideImage').src = currentImages[currentIndex];
+    }
+
+    // Show PDF popup
+    function showPdfPopup(subjectCode) {
+      // Create overlay
+      const overlay = document.createElement('div');
+      overlay.className = 'overlay';
+      overlay.id = 'pdfOverlay';
+      
+      // Create popup container
+      const popup = document.createElement('div');
+      popup.className = 'popup-container';
+      
+      // Create close button
+      const closeBtn = document.createElement('button');
+      closeBtn.className = 'close-btn';
+      closeBtn.textContent = '×';
+      closeBtn.onclick = hidePdfPopup;
+      
+      // Create content area
+      const content = document.createElement('div');
+      content.className = 'content-scroll';
+      content.innerHTML = `
+  <h2 style="text-align:center;">USEFUL PDF RESOURCES</h2>
+
+  <!-- CAIT 1 -->
+  <div class="app-guide-container">
+    <h4 style="text-align:center;">CAIT-1</h4>
+    <a href="${subjectCode}-cait1.pdf" download="${subjectCode}-cait1.pdf" class="app-guide-download-btn">
+      <span class="app-guide-icon">📥</span> ${subjectCode}-cait1.pdf
+    </a>
+    <button class="pdfEce-btn" onclick="openEcePdfPreview('${subjectCode}-cait1.pdf')">Preview PDF</button>
+  </div>
+
+  <!-- CAIT 2 -->
+  <div class="app-guide-container">
+    <h4 style="text-align:center;">CAIT-2</h4>
+    <a href="${subjectCode}-cait2.pdf" download="${subjectCode}-cait2.pdf" class="app-guide-download-btn">
+      <span class="app-guide-icon">📥</span> ${subjectCode}-cait2.pdf
+    </a>
+    <button class="pdfEce-btn" onclick="openEcePdfPreview('ece.pdf')">Preview PDF</button>
+  </div>
+
+  <!-- MODEL EXAM -->
+  <div class="app-guide-container">
+    <h4 style="text-align:center;">MODEL EXAM</h4>
+    <a href="${subjectCode}-model-exam.pdf" download="${subjectCode}-model-exam.pdf" class="app-guide-download-btn">
+      <span class="app-guide-icon">📥</span>${subjectCode}-model-exam.pdf
+    </a>
+    <button class="pdfEce-btn" onclick="openEcePdfPreview('${subjectCode}-model-exam.pdf')">Preview PDF</button>
+  </div>
+`;
+      // Assemble popup
+      popup.appendChild(closeBtn);
+      popup.appendChild(content);
+      overlay.appendChild(popup);
+      
+      // Add to document
+      document.body.appendChild(overlay);
+      
+      // Show overlay
+      overlay.style.display = 'flex';
+    }
+
+    // Hide PDF popup
+    function hidePdfPopup() {
+      const overlay = document.getElementById('pdfOverlay');
+      if (overlay) {
+        overlay.remove();
+      }
+    }
+
+    // Close modal when clicking outside of it
+    window.onclick = function(event) {
+      const modal = document.getElementById('imageModal');
+      if (event.target === modal) {
+        closeModal();
+      }
+    }
+
+    // Initialize the page
+    window.onload = function() {
+      initializeProgressData();
+      showSemester(1); // Show first semester by default
+    };
+  
+
+
+  // Function to open modal with specific PDF
+  function openEcePdfPreview(pdfPath) {
+    const modal = document.getElementById('pdfEce-modal');
+    const embed = document.getElementById('pdfEce-embed');
+    const downloadLink = document.getElementById('pdfEce-download');
+
+    embed.src = pdfPath;
+    downloadLink.href = pdfPath;
+
+    modal.style.display = 'flex';
+  }
+
+  // Modal controls
+  const pdfEceCloseBtn = document.getElementById('pdfEce-closeBtn');
+  const pdfEceModal = document.getElementById('pdfEce-modal');
+  const pdfEceStars = document.querySelectorAll('.pdfEce-star');
+  const pdfEceRatingText = document.getElementById('pdfEce-ratingText');
+
+  pdfEceCloseBtn.addEventListener('click', () => {
+    pdfEceModal.style.display = 'none';
+  });
+
+  window.addEventListener('click', (e) => {
+    if (e.target === pdfEceModal) {
+      pdfEceModal.style.display = 'none';
+    }
+  });
+
+  pdfEceStars.forEach(star => {
+    star.addEventListener('click', () => {
+      const value = star.getAttribute('data-value');
+      pdfEceStars.forEach(s => s.classList.remove('active'));
+      for (let i = 0; i < value; i++) {
+        pdfEceStars[i].classList.add('active');
+      }
+      pdfEceRatingText.textContent = ` ${value}/5`;
+    });
+  });
+</script>
+</body>
+</html>
