@@ -1237,97 +1237,49 @@
     }
 
     // Show practical images in modal
-    function showPracticalImages(subjectCode, practicalIndex) {
-      const subject = semesterData[currentSemester].subjects[subjectCode];
-      const practical = subject.practicals[practicalIndex];
-      currentImages = practical.images;
-      currentIndex = 0;
-      document.getElementById('slideImage').src = currentImages[currentIndex];
-      document.getElementById('imageModal').style.display = 'block';
-    }
-
-    // Close modal
-    function closeModal() {
-      document.getElementById('imageModal').style.display = 'none';
-    }
-
-    // Change slide in modal
-    function changeSlide(direction) {
-      currentIndex += direction;
-      if (currentIndex < 0) currentIndex = currentImages.length - 1;
-      if (currentIndex >= currentImages.length) currentIndex = 0;
-      document.getElementById('slideImage').src = currentImages[currentIndex];
-    }
-
-    // Show PDF popup
     function showPdfPopup(subjectCode) {
-      // Create overlay
-      const overlay = document.createElement('div');
-      overlay.className = 'overlay';
-      overlay.id = 'pdfOverlay';
-      
-      // Create popup container
-      const popup = document.createElement('div');
-      popup.className = 'popup-container';
-      
-      // Create close button
-      const closeBtn = document.createElement('button');
-      closeBtn.className = 'close-btn';
-      closeBtn.textContent = '×';
-      closeBtn.onclick = hidePdfPopup;
-      
-      // Create content area
-      const content = document.createElement('div');
-      content.className = 'content-scroll';
-      content.innerHTML = `
-  <h2 style="text-align:center;">USEFUL PDF RESOURCES</h2>
+  const pdfTypes = ["cait1", "practical", "cait2", "model-exam"];
 
-  <!-- CAIT 1 -->
-  <div class="app-guide-container">
-    <h4 style="text-align:center;">CAIT-1</h4>
-    <a href="myfolder/myfolder/${subjectCode}-cait1.pdf" download="${subjectCode}-cait1.pdf" class="app-guide-download-btn">
-      <span class="app-guide-icon">📥</span> ${subjectCode}-cait1.pdf
-    </a>
-    <button class="pdfEce-btn" onclick="openEcePdfPreview('${subjectCode}-cait1.pdf')">Preview PDF</button>
-  </div>
-  
-<!-- practical  -->
-  <div class="app-guide-container">
-    <h4 style="text-align:center;">practical</h4>
-    <a href="myfolder/myfolder/${subjectCode}-practical.pdf" download="${subjectCode}-practical.pdf" class="app-guide-download-btn">
-      <span class="app-guide-icon">📥</span>${subjectCode}-practical.pdf
-    </a>
-    <button class="pdfEce-btn" onclick="openEcePdfPreview('${subjectCode}-practical.pdf')">Preview PDF</button>
-  </div>
-  <!-- CAIT 2 -->
-  <div class="app-guide-container">
-    <h4 style="text-align:center;">CAIT-2</h4>
-    <a href="myfolder/myfolder/${subjectCode}-cait2.pdf" download="${subjectCode}-cait2.pdf" class="app-guide-download-btn">
-      <span class="app-guide-icon">📥</span> ${subjectCode}-cait2.pdf
-    </a>
-    <button class="pdfEce-btn" onclick="openEcePdfPreview('ece.pdf')">Preview PDF</button>
-  </div>
+  const overlay = document.createElement("div");
+  overlay.className = "overlay";
+  overlay.id = "pdfOverlay";
 
-  <!-- MODEL EXAM -->
-  <div class="app-guide-container">
-    <h4 style="text-align:center;">MODEL EXAM</h4>
-    <a href="myfolder/myfolder/${subjectCode}-model-exam.pdf" download="${subjectCode}-model-exam.pdf" class="app-guide-download-btn">
-      <span class="app-guide-icon">📥</span>${subjectCode}-model-exam.pdf
-    </a>
-    <button class="pdfEce-btn" onclick="openEcePdfPreview('${subjectCode}-model-exam.pdf')">Preview PDF</button>
-  </div>
-`;
-      // Assemble popup
-      popup.appendChild(closeBtn);
-      popup.appendChild(content);
-      overlay.appendChild(popup);
-      
-      // Add to document
-      document.body.appendChild(overlay);
-      
-      // Show overlay
-      overlay.style.display = 'flex';
-    }
+  const popup = document.createElement("div");
+  popup.className = "popup-container";
+
+  const closeBtn = document.createElement("button");
+  closeBtn.className = "close-btn";
+  closeBtn.textContent = "×";
+  closeBtn.onclick = hidePdfPopup;
+
+  const content = document.createElement("div");
+  content.className = "content-scroll";
+
+  // Create sections dynamically
+  content.innerHTML = pdfTypes
+    .map(type => {
+      const pdfPath = `myfolder/myfolder/${subjectCode}-${type}.pdf`;
+      return `
+        <div class="app-guide-container">
+          <h4 style="text-align:center;">${type.replace("-", " ").toUpperCase()}</h4>
+          <a href="${pdfPath}" download="${subjectCode}-${type}.pdf" class="app-guide-download-btn">
+            <span class="app-guide-icon">📥</span> Download ${subjectCode}-${type}.pdf
+          </a>
+          <button class="pdfEce-btn" onclick="openEcePdfPreview('${pdfPath}')">
+            Preview PDF
+          </button>
+        </div>
+      `;
+    })
+    .join("");
+
+  popup.appendChild(closeBtn);
+  popup.appendChild(content);
+  overlay.appendChild(popup);
+  document.body.appendChild(overlay);
+
+  overlay.style.display = "flex";
+}
 
     // Hide PDF popup
     function hidePdfPopup() {
