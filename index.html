@@ -1264,7 +1264,7 @@ function showPdfPopup(subjectCode) {
   // Use single folder path (fixed)
   content.innerHTML = pdfTypes
     .map(type => {
-      const pdfPath = `myfolder/${subjectCode}-${type}.pdf`;
+      const pdfPath = ``myfolder/myfolder/${subjectCode}-${type}.pdf`;
       return `
         <div class="app-guide-container">
           <h4 style="text-align:center;">${type.replace("-", " ").toUpperCase()}</h4>
